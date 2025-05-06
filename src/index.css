@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -34,21 +37,11 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --bg-primary: #111111;
+    --text-primary: #FFFFFF;
+    --accent-primary: #00B7FF;
+    --border-primary: #555555;
+    --text-secondary: #AAAAAA;
   }
 
   .dark {
@@ -79,14 +72,6 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -96,6 +81,64 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-bg-primary text-text-primary font-inter;
+    scroll-behavior: smooth;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat font-extrabold;
+  }
+}
+
+/* GSAP ScrollTrigger marker styles */
+.gsap-marker {
+  color: white;
+}
+
+/* Custom scroll styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555555;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00B7FF;
+}
+
+/* Section styles */
+.section {
+  @apply py-16 md:py-24 px-4 md:px-12 lg:px-24 min-h-screen flex items-center;
+}
+
+.section-title {
+  @apply text-4xl md:text-5xl lg:text-6xl mb-8 relative inline-block after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-1 after:bg-accent-primary after:transform after:scale-x-0 after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-300;
+}
+
+/* Interactive elements */
+.skill-tag {
+  @apply px-3 py-1 border border-border-primary bg-transparent hover:border-accent-primary transition-colors cursor-pointer;
+}
+
+.project-card {
+  @apply border border-border-primary hover:border-accent-primary transition-all duration-300 overflow-hidden;
+}
+
+/* Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.5s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
 }
