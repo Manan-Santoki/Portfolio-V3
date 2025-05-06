@@ -22,7 +22,7 @@ const experienceData: Experience[] = [
     period: 'May 2023 - July 2023',
     description: [
       'Implemented CI/CD pipelines using Jenkins and Docker, reducing deployment time by 30%.',
-      'Developed an AI Chatbot using LangChain and integrated it with company's knowledge base.',
+      'Developed an AI Chatbot using LangChain and integrated it with company\'s knowledge base.',
       'Configured and managed Kubernetes clusters for microservices architecture.'
     ]
   },
