@@ -1,5 +1,5 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import gsap from 'gsap'; // Import GSAP here as well for site content animation
 import Navigation from '@/components/layout/Navigation';
 import HeroSection from '@/components/sections/HeroSection';
 import AboutSection from '@/components/sections/AboutSection';
@@ -9,8 +9,12 @@ import ExperienceSection from '@/components/sections/ExperienceSection';
 import EducationSection from '@/components/sections/EducationSection';
 import ContactSection from '@/components/sections/ContactSection';
 import GsapProvider from '@/components/providers/GsapProvider';
+import Preloader from '@/components/layout/Preloader'; // Import the Preloader
 
 const Index = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const siteMainRef = useRef<HTMLDivElement>(null); // Ref for the main content wrapper
+
   // Smooth scrolling for anchor links
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
@@ -33,9 +37,36 @@ const Index = () => {
     return () => document.removeEventListener('click', handleAnchorClick);
   }, []);
 
+  // Animation for site content after preloader is done
+  useEffect(() => {
+    if (!isLoading && siteMainRef.current) {
+      gsap.to(siteMainRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 1, // Slightly longer for a dramatic reveal
+        ease: "power3.out", // Smoother easing
+        delay: 0.2, // Small delay for overlap with preloader exit
+      });
+    }
+  }, [isLoading]);
+  
+  const handlePreloaderLoaded = () => {
+    // console.log("Preloader finished, setting isLoading to false.");
+    setIsLoading(false);
+  };
+
+  if (isLoading) {
+    return <Preloader onLoaded={handlePreloaderLoaded} siteName="Parsing..." />; // Or your desired site name
+  }
+
   return (
     <GsapProvider>
-      <div className="bg-bg-primary min-h-screen">
+      {/* site-main-content class and ref for GSAP animation */}
+      <div 
+        ref={siteMainRef} 
+        className="site-main-content bg-bg-primary min-h-screen"
+        style={{ opacity: 0, transform: 'translateY(20px)' }} // Initial state for GSAP
+      >
         <Navigation />
         
         <main>

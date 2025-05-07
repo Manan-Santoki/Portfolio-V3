@@ -11,15 +11,14 @@ const educationData = [
     id: 'vit',
     institution: 'Vellore Institute of Technology',
     degree: 'B.Tech in Computer Science and Engineering',
-    period: '2020 - 2024',
-    grade: 'CGPA: 7.72',
+    period: '2021 - 2025',
     courses: ['Artificial Intelligence', 'Machine Learning', 'Database Systems', 'Computer Networks', 'Cloud Computing']
   },
   {
     id: 'urmi',
     institution: 'Urmi School',
     degree: 'Higher Secondary Education',
-    period: '2018 - 2020',
+    period: '2019 - 2021',
     grade: 'Percentage: 85%',
     courses: []
   },
@@ -27,7 +26,7 @@ const educationData = [
     id: 'bright',
     institution: 'Bright Day School',
     degree: 'Secondary Education',
-    period: '2008 - 2018',
+    period: '2008 - 2019',
     grade: 'Percentage: 92%',
     courses: []
   }

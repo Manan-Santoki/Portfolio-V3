@@ -1,0 +1,125 @@
+/* src/styles/Preloader.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Michroma&display=swap'); /* Added Michroma font */
+
+/* Basic reset */
+.preloader-component *,
+.preloader-component *::before,
+.preloader-component *::after {
+  box-sizing: border-box;
+}
+
+.preloader-component {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.preloader-component .site-name-preloader {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.8); /* Slight transparency for depth */
+}
+
+.preloader-component .site-name-preloader span {
+  font-family: 'Michroma', sans-serif; /* CHANGED to Michroma */
+  font-size: clamp(40px, 10vw, 70px); /* Michroma is wide, might want to slightly reduce max size */
+  font-weight: 400; /* Michroma is best at its native weight (Regular 400) */
+  text-transform: uppercase;
+  letter-spacing: 1px; /* Michroma is wide, adjust as needed. Try 0, 1, or even -1px */
+  background: linear-gradient(45deg, #fff, #ccc); /* Subtle gradient text */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0.9;
+}
+
+/* Typewriter effect styles */
+.typewriter-text {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  color: #fff;
+  font-weight: 100; /* Makes the '|' character itself thin */
+  margin-left: 2px;
+  background: #fff;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+}
+
+.preloader-component .preloader-gutters {
+  background-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.preloader-component .preloader-gutters.show {
+  opacity: 1;
+}
+
+.preloader-component .preloader-gutters.hide {
+  opacity: 0;
+}
+
+.preloader-component .preloader-overlay {
+  background: linear-gradient(to right, #000 0%, #111 100%); /* Subtle gradient */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  transform: translateX(-100%);
+  will-change: transform;
+}
+
+.preloader-component .preloader-gutters .bar {
+  width: 12.5%;
+  height: 100%;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.preloader-component .preloader-gutters .inner-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: #fff; /* Solid white, no gradient */
+  will-change: width;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); /* Subtle glow retained */
+}
+
+/* For the main site content */
+.site-main-content {
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: opacity, transform;
+}

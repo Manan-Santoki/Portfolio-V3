@@ -1,9 +1,12 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ChevronDown, ChevronUp, Calendar, Briefcase } from 'lucide-react';
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Calendar, Briefcase } from 'lucide-react';
 
+// Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 interface Experience {
@@ -50,131 +53,140 @@ const experienceData: Experience[] = [
   }
 ];
 
-const ExperienceCard = ({ exp, isActive, toggle }: { exp: Experience, isActive: boolean, toggle: () => void }) => {
-  const contentRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    if (!contentRef.current) return;
-    
-    if (isActive) {
-      gsap.to(contentRef.current, {
-        height: 'auto',
-        opacity: 1,
-        duration: 0.4,
-        ease: 'power2.out'
-      });
-    } else {
-      gsap.to(contentRef.current, {
-        height: 0,
-        opacity: 0,
-        duration: 0.4,
-        ease: 'power2.out'
-      });
-    }
-  }, [isActive]);
-
-  return (
-    <div className="border-l-2 border-border-primary pl-6 pb-8 relative">
-      <div className="absolute top-0 left-[-9px] w-4 h-4 bg-bg-primary border-2 border-accent-primary rounded-full"></div>
-      
-      <div 
-        className="flex flex-col md:flex-row md:items-center justify-between cursor-pointer"
-        onClick={toggle}
-      >
-        <div>
-          <h3 className="text-xl font-bold">{exp.position}</h3>
-          <div className="flex items-center text-text-secondary mt-1">
-            <Briefcase size={16} className="mr-2" />
-            <span>{exp.company}</span>
-          </div>
-        </div>
-        
-        <div className="flex items-center mt-2 md:mt-0">
-          <div className="flex items-center text-text-secondary mr-4">
-            <Calendar size={16} className="mr-2" />
-            <span>{exp.period}</span>
-          </div>
-          
-          <button 
-            className="text-accent-primary border border-border-primary p-1 rounded-sm hover:bg-accent-primary/10 transition-colors"
-            aria-label={isActive ? "Collapse details" : "Expand details"}
-          >
-            {isActive ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </button>
-        </div>
-      </div>
-      
-      <div
-        ref={contentRef}
-        className="overflow-hidden opacity-0 h-0 mt-4"
-      >
-        <ul className="list-disc pl-4 space-y-2 text-text-secondary">
-          {exp.description.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
 const ExperienceSection = () => {
-  const [activeExp, setActiveExp] = useState<string | null>('balkrushna'); // Start with first one open
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
+  const experienceRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   useEffect(() => {
     if (!sectionRef.current) return;
     
-    const tl = gsap.timeline({
+    const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: "top 70%",
         end: "bottom 20%",
-        toggleActions: "play none none none"
+        toggleActions: "play none none reverse"
       }
     });
     
-    tl.fromTo(titleRef.current, 
+    // Animate section title
+    timeline.fromTo(titleRef.current, 
       { opacity: 0, y: 50 }, 
-      { opacity: 1, y: 0, duration: 0.7 }
+      { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }
     );
     
+    // Animate timeline line drawing
     if (timelineRef.current) {
-      const items = timelineRef.current.children;
-      tl.fromTo(items, 
-        { opacity: 0, x: -30 }, 
-        { opacity: 1, x: 0, duration: 0.6, stagger: 0.15 }, 
-        "-=0.3"
+      timeline.fromTo(
+        timelineRef.current,
+        { height: 0 },
+        { height: '100%', duration: 1.5, ease: "power3.inOut" },
+        "-=0.4"
       );
     }
     
+    // Animate each experience card with staggered effect
+    experienceRefs.current.forEach((ref, index) => {
+      if (!ref) return;
+      
+      timeline.fromTo(
+        ref,
+        { 
+          opacity: 0, 
+          x: index % 2 === 0 ? -50 : 50 
+        },
+        { 
+          opacity: 1, 
+          x: 0, 
+          duration: 0.8, 
+          ease: "power3.out" 
+        },
+        "-=0.6"
+      );
+      
+      // Animate achievement items within each card
+      const achievements = ref.querySelectorAll(".achievement-item");
+      timeline.fromTo(
+        achievements,
+        { opacity: 0, y: 20 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          stagger: 0.2, 
+          duration: 0.5, 
+          ease: "power3.out" 
+        },
+        "-=0.4"
+      );
+    });
+    
     return () => {
-      if (tl.scrollTrigger) {
-        tl.scrollTrigger.kill();
+      if (timeline.scrollTrigger) {
+        timeline.scrollTrigger.kill();
       }
     };
   }, []);
-
-  const toggleExp = (id: string) => {
-    setActiveExp(activeExp === id ? null : id);
-  };
 
   return (
     <section id="experience" ref={sectionRef} className="section bg-bg-primary">
       <div className="max-w-6xl mx-auto w-full">
         <h2 ref={titleRef} className="section-title">Experience</h2>
         
-        <div className="mt-12">
-          <div ref={timelineRef} className="space-y-0">
-            {experienceData.map(exp => (
-              <ExperienceCard 
-                key={exp.id} 
-                exp={exp} 
-                isActive={activeExp === exp.id}
-                toggle={() => toggleExp(exp.id)}
-              />
+        <div className="mt-12 relative">
+          {/* Timeline line */}
+          <div
+            ref={timelineRef}
+            className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-accent-primary h-full z-0"
+          />
+          
+          {/* Experience items */}
+          <div className="relative z-10">
+            {experienceData.map((exp, index) => (
+              <div
+                key={exp.id}
+                ref={(el) => { experienceRefs.current[index] = el; }}
+                className={`flex mb-16 ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
+              >
+                {/* Timeline dot */}
+                <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
+                  <div className="w-4 h-4 rounded-full bg-accent-primary border-2 border-bg-primary"></div>
+                </div>
+                
+                {/* Content card */}
+                <div className={`w-full md:w-5/12 ${index % 2 === 0 ? "md:pr-8" : "md:pl-8"}`}>
+                  <Card className="h-full border-border-primary bg-bg-primary hover:shadow-lg transition-shadow duration-300">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold text-text-primary mb-1">
+                        {exp.position}
+                      </h3>
+                      
+                      <div className="flex items-center text-text-secondary mb-2">
+                        <Briefcase size={16} className="mr-2" />
+                        <span>{exp.company}</span>
+                      </div>
+                      
+                      <Badge variant="outline" className="mb-4 flex items-center text-text-secondary">
+                        <Calendar size={14} className="mr-2" />
+                        {exp.period}
+                      </Badge>
+                      
+                      <ul className="space-y-2 mt-4">
+                        {exp.description.map((item, i) => (
+                          <li
+                            key={i}
+                            className="achievement-item flex items-start text-text-secondary"
+                          >
+                            <span className="inline-block w-2 h-2 rounded-full bg-accent-primary mt-2 mr-2"></span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             ))}
           </div>
         </div>

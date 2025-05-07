@@ -142,3 +142,15 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+:root {
+  /* Your theme colors */
+  --color-accent-primary: #00B7FF; /* Your actual accent color */
+  --color-accent-primary-transparent: rgba(0, 183, 255, 0.1); /* For hover background */
+  --color-border-primary: #555555; /* Your actual default border color */
+  --color-bg-primary: #1a1a1a;    /* Your primary background (e.g., dark theme) */
+  --color-bg-secondary: #2a2a2a;  /* Your secondary background (for panel, or offset for focus ring) */
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #b0b0b0;
+  /* Add any other theme colors you use */
+}

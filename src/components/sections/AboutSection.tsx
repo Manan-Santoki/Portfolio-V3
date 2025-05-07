@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -75,7 +74,7 @@ const AboutSection = () => {
           <div ref={contentRef} className="lg:col-span-2">
             <p className="text-lg mb-6">
               I'm a passionate tech enthusiast with expertise in Full-Stack Development, DevOps, and AI/ML. 
-              With a solid academic foundation from VIT Vellore (CGPA: 7.72), I blend theoretical knowledge 
+              With a solid academic foundation from VIT Vellore, I blend theoretical knowledge 
               with practical skills to create innovative solutions.
             </p>
             
@@ -86,9 +85,9 @@ const AboutSection = () => {
             </p>
             
             <p className="text-text-secondary italic">
-              "Technology is best when it brings people together."
+              "It doesn't make sense to hire smart people and tell them what to do. We hire smart people so they can tell us what to do."
             </p>
-            
+             - Steve Jobs
             <div ref={capabilitiesRef} className="mt-12">
               <h3 className="text-2xl font-bold mb-6 border-l-4 border-accent-primary pl-3">
                 Core Capabilities
@@ -127,15 +126,12 @@ const AboutSection = () => {
               <div className="relative border-2 border-border-primary p-1 w-full max-w-md mx-auto lg:mx-0">
                 {/* Replace with actual profile image */}
                 <div className="aspect-[3/4] bg-border-primary relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center text-text-secondary">
-                    <p className="text-sm">Profile Photo</p>
-                  </div>
                   {/* If you have an actual image: */}
-                  {/* <img 
-                    src="/path-to-your-image.jpg" 
+                  <img 
+                    src="https://s3.manansantoki.xyz/public/IMG_8678(1).jpg" 
                     alt="Manan Santoki" 
                     className="w-full h-full object-cover"
-                  /> */}
+                  />
                 </div>
                 <span className="absolute -bottom-2 -right-2 w-12 h-12 border-2 border-accent-primary bg-bg-primary"></span>
               </div>
@@ -146,19 +142,41 @@ const AboutSection = () => {
                 </h3>
                 
                 <div className="space-y-4">
-                  <div className="border border-border-primary p-4 hover:border-accent-primary transition-colors duration-300">
+                  <a href="https://www.credly.com/badges/0c6e9c72-934e-4b71-a857-522edb6071e4/public_url" 
+                     className="block border border-border-primary p-4 hover:border-accent-primary hover:bg-bg-secondary/20 transition-all duration-300"
+                     target="_blank" 
+                     rel="noopener noreferrer" 
+                     aria-label="View AWS Certified Solutions Architect – Associate credential">
                     <div className="flex items-center gap-3">
                       <div className="h-3 w-3 bg-accent-primary"></div>
                       <h4 className="font-semibold">AWS Certified Solutions Architect – Associate</h4>
+                      <span className="ml-auto text-sm text-accent-primary">Verify →</span>
                     </div>
-                  </div>
+                  </a>
                   
-                  <div className="border border-border-primary p-4 hover:border-accent-primary transition-colors duration-300">
+                  <a href="https://www.credly.com/badges/1f5d4c66-316b-4a62-a43e-e19da9c9fcc5/public_url" 
+                     className="block border border-border-primary p-4 hover:border-accent-primary hover:bg-bg-secondary/20 transition-all duration-300"
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     aria-label="View AWS Certified Cloud Practitioner credential">
+                    <div className="flex items-center gap-3">
+                      <div className="h-3 w-3 bg-accent-primary"></div>
+                      <h4 className="font-semibold">AWS Certified Cloud Practitioner</h4>
+                      <span className="ml-auto text-sm text-accent-primary">Verify →</span>
+                    </div>
+                  </a>
+                  
+                  <a href="https://www.credly.com/badges/c2a6e269-8983-476a-bf47-453acddc8c9b/public_url" 
+                     className="block border border-border-primary p-4 hover:border-accent-primary hover:bg-bg-secondary/20 transition-all duration-300"
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     aria-label="View Cloud Digital Leader credential">
                     <div className="flex items-center gap-3">
                       <div className="h-3 w-3 bg-accent-primary"></div>
                       <h4 className="font-semibold">Cloud Digital Leader</h4>
+                      <span className="ml-auto text-sm text-accent-primary">Verify →</span>
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
             </div>
