@@ -19,7 +19,7 @@ const educationData = [
     institution: 'Urmi School',
     degree: 'Higher Secondary Education',
     period: '2019 - 2021',
-    grade: 'Percentage: 85%',
+    grade: 'Percentage: 92.2%',
     courses: []
   },
   {
@@ -27,7 +27,7 @@ const educationData = [
     institution: 'Bright Day School',
     degree: 'Secondary Education',
     period: '2008 - 2019',
-    grade: 'Percentage: 92%',
+    grade: 'Percentage: 89.2%',
     courses: []
   }
 ];
