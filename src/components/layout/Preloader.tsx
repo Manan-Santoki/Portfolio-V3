@@ -11,8 +11,10 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded, siteName = "Cosmic" }) 
   const preloaderRef = useRef<HTMLDivElement>(null);
   const preloaderOverlayRef = useRef<HTMLDivElement>(null);
   const siteNameRef = useRef<HTMLSpanElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   const [displayText, setDisplayText] = useState('');
   const [typingComplete, setTypingComplete] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   // Typewriter effect
   useEffect(() => {
@@ -32,9 +34,30 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded, siteName = "Cosmic" }) 
     return () => clearInterval(typingInterval);
   }, [siteName]);
 
-  // Loading animation - only starts after typing is complete
+  // Progress bar animation - starts after typing is complete
   useEffect(() => {
     if (!typingComplete) return;
+    
+    let progressTimer: NodeJS.Timeout;
+    
+    // Animate progress from 0 to 100 over 2.5 seconds
+    progressTimer = setInterval(() => {
+      setProgress(prev => {
+        const newProgress = prev + 1;
+        if (newProgress >= 100) {
+          clearInterval(progressTimer);
+          return 100;
+        }
+        return newProgress;
+      });
+    }, 25); // 25ms * 100 steps = ~2.5 seconds
+    
+    return () => clearInterval(progressTimer);
+  }, [typingComplete]);
+
+  // Apply loading animation after progress reaches 100%
+  useEffect(() => {
+    if (progress !== 100) return;
     
     if (!preloaderRef.current || !preloaderOverlayRef.current || !siteNameRef.current) {
       console.warn("Preloader refs not ready. Skipping animation.");
@@ -53,16 +76,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded, siteName = "Cosmic" }) 
     }
 
     const masterTimeline = gsap.timeline({
-      delay: 0.5, // Short delay after typing completes
-    });
-
-    // Cursor blink effect after typing completes
-    gsap.to('.typewriter-cursor', {
-      opacity: 0,
-      duration: 0.5,
-      repeat: -1,
-      yoyo: true,
-      ease: "power1.inOut",
+      delay: 0.5, // Short delay after progress completes
     });
 
     // Animate bars with a cascading effect
@@ -103,16 +117,30 @@ const Preloader: React.FC<PreloaderProps> = ({ onLoaded, siteName = "Cosmic" }) 
     return () => {
       masterTimeline.kill();
     };
-  }, [onLoaded, typingComplete]);
+  }, [onLoaded, progress]);
 
   return (
     <div className="preloader-component" ref={preloaderRef}>
       <div className="site-name-preloader">
-        <span ref={siteNameRef} className="typewriter-text">
-          {displayText}<span className="typewriter-cursor">|</span>
-        </span>
+        <div className="preloader-content">
+          <span ref={siteNameRef} className="typewriter-text">
+            {displayText}<span className="typewriter-cursor">|</span>
+          </span>
+          
+          {typingComplete && (
+            <div className="progress-container">
+              <div 
+                ref={progressBarRef} 
+                className="progress-bar" 
+                style={{ width: `${progress}%` }}
+              >
+                <span className="progress-text">{progress}%</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-      <div className={`preloader-gutters ${typingComplete ? 'show' : 'hide'}`}>
+      <div className={`preloader-gutters ${typingComplete && progress === 100 ? 'show' : 'hide'}`}>
         {Array.from({ length: 8 }).map((_, index) => (
           <div className="bar" key={index}>
             <div className="inner-bar"></div>

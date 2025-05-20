@@ -1,0 +1,14 @@
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  portfolio-manan:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production # Target the 'production' stage
+      # If you need build-time args for the production build:
+      # args:
+      #   VITE_API_BASE_URL: https://your-production-api.com
+    container_name: portfolio
+    restart: always

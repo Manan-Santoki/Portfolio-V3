@@ -128,7 +128,7 @@ const AboutSection = () => {
                 <div className="aspect-[3/4] bg-border-primary relative overflow-hidden">
                   {/* If you have an actual image: */}
                   <img 
-                    src="https://s3.manansantoki.xyz/public/IMG_8678(1).jpg" 
+                    src="./profile-pic.jpg" 
                     alt="Manan Santoki" 
                     className="w-full h-full object-cover"
                   />
