@@ -1,6 +1,4 @@
-# docker-compose.prod.yml
 version: '3.8'
-
 services:
   portfolio-manan:
     build:
@@ -12,3 +10,45 @@ services:
       #   VITE_API_BASE_URL: https://your-production-api.com
     container_name: portfolio
     restart: always
+    labels:
+      # Enable Traefik for this service
+      - "traefik.enable=true"
+      
+      # Main service (www version)
+      - "traefik.http.routers.portfolio-www.rule=Host(`www.manansantoki.xyz`)"
+      - "traefik.http.routers.portfolio-www.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-www.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.portfolio-www.service=portfolio-service"
+      
+      # Non-www redirect router
+      - "traefik.http.routers.portfolio-redirect.rule=Host(`manansantoki.xyz`)"
+      - "traefik.http.routers.portfolio-redirect.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-redirect.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.portfolio-redirect.middlewares=redirect-to-www"
+      
+      # HTTP to HTTPS redirect (optional but recommended)
+      - "traefik.http.routers.portfolio-www-http.rule=Host(`www.manansantoki.xyz`)"
+      - "traefik.http.routers.portfolio-www-http.entrypoints=web"
+      - "traefik.http.routers.portfolio-www-http.middlewares=redirect-to-https"
+      
+      - "traefik.http.routers.portfolio-redirect-http.rule=Host(`manansantoki.xyz`)"
+      - "traefik.http.routers.portfolio-redirect-http.entrypoints=web"
+      - "traefik.http.routers.portfolio-redirect-http.middlewares=redirect-to-https"
+      
+      # Middleware definitions
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.regex=^https://manansantoki.xyz/(.*)"
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.replacement=https://www.manansantoki.xyz/${1}"
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.permanent=true"
+      
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+      
+      # Service definition
+      - "traefik.http.services.portfolio-service.loadbalancer.server.port=80"
+    
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true
