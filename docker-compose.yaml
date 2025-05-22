@@ -8,56 +8,51 @@ services:
     container_name: portfolio
     restart: always
     labels:
-      - "traefik.enable=true" # Important: This tells Traefik to manage this container
+      - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network" # Good practice
 
-      # This label ensures Traefik uses the correct network if it's configured
-      # to only look at containers on a specific network (which yours is).
-      # While the 'providers.docker.network' in traefik.yml is the main directive,
-      # this can sometimes be an extra hint, though often not strictly necessary
-      # if the container is already on the correct network.
-      # - "traefik.docker.network=dokploy-network" # Usually not needed if the container joins the network below
+      # --- Routers for manansantoki.xyz (non-www) ---
+      # 1. HTTP non-www: redirect to HTTPS non-www
+      - "traefik.http.routers.portfolio-nonwww-http.rule=Host(`manansantoki.xyz`)"
+      - "traefik.http.routers.portfolio-nonwww-http.entrypoints=web"
+      - "traefik.http.routers.portfolio-nonwww-http.middlewares=redirect-scheme-https@docker" # Use a generic HTTPS redirect middleware
 
-      # Main service (www version)
-      - "traefik.http.routers.portfolio-www.rule=Host(`www.manansantoki.xyz`)"
-      - "traefik.http.routers.portfolio-www.entrypoints=websecure"
-      - "traefik.http.routers.portfolio-www.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.portfolio-www.service=portfolio-service"
+      # 2. HTTPS non-www: redirect to HTTPS www
+      - "traefik.http.routers.portfolio-nonwww-https.rule=Host(`manansantoki.xyz`)"
+      - "traefik.http.routers.portfolio-nonwww-https.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-nonwww-https.tls.certresolver=letsencrypt" # Important for this router to get a cert
+      - "traefik.http.routers.portfolio-nonwww-https.middlewares=redirect-to-www@docker" # Your existing www redirect
+      # This router does NOT define a service, as its sole purpose is to redirect.
 
-      # Non-www redirect router
-      - "traefik.http.routers.portfolio-redirect.rule=Host(`manansantoki.xyz`)"
-      - "traefik.http.routers.portfolio-redirect.entrypoints=websecure"
-      - "traefik.http.routers.portfolio-redirect.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.portfolio-redirect.middlewares=redirect-to-www"
-
-      # HTTP to HTTPS redirect
+      # --- Routers for www.manansantoki.xyz ---
+      # 3. HTTP www: redirect to HTTPS www
       - "traefik.http.routers.portfolio-www-http.rule=Host(`www.manansantoki.xyz`)"
       - "traefik.http.routers.portfolio-www-http.entrypoints=web"
-      - "traefik.http.routers.portfolio-www-http.middlewares=redirect-to-https@docker" # Referencing middleware defined on Traefik
+      - "traefik.http.routers.portfolio-www-http.middlewares=redirect-scheme-https@docker" # Use a generic HTTPS redirect middleware
 
-      - "traefik.http.routers.portfolio-redirect-http.rule=Host(`manansantoki.xyz`)"
-      - "traefik.http.routers.portfolio-redirect-http.entrypoints=web"
-      - "traefik.http.routers.portfolio-redirect-http.middlewares=redirect-to-https@docker" # Referencing middleware defined on Traefik
+      # 4. HTTPS www: serves the actual content (THIS IS YOUR WORKING ROUTER)
+      - "traefik.http.routers.portfolio-www-https.rule=Host(`www.manansantoki.xyz`)"
+      - "traefik.http.routers.portfolio-www-https.entrypoints=websecure"
+      - "traefik.http.routers.portfolio-www-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.portfolio-www-https.service=portfolio-service@docker"
 
-      # Middleware definitions (these are service-specific for the redirect-to-www)
-      # If redirect-to-https is globally defined in your Traefik's dynamic config or on entrypoints,
-      # you might not need to define it per-router here.
-      # However, your current setup defines them, which is fine.
-      - "traefik.http.middlewares.redirect-to-www.redirectregex.regex=^https://manansantoki.xyz/(.*)"
+      # --- Middleware Definitions ---
+      # Middleware to redirect HTTP to HTTPS
+      - "traefik.http.middlewares.redirect-scheme-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-scheme-https.redirectscheme.permanent=true"
+
+      # Middleware to redirect non-www to www (ensure it captures scheme and path)
+      # This regex is more robust as it works for both http and https
+      - "traefik.http.middlewares.redirect-to-www.redirectregex.regex=^https?://manansantoki\\.xyz/(.*)" # Match http OR https, escape dot
       - "traefik.http.middlewares.redirect-to-www.redirectregex.replacement=https://www.manansantoki.xyz/$${1}"
       - "traefik.http.middlewares.redirect-to-www.redirectregex.permanent=true"
 
-      # This redirect-to-https middleware is for your service's routers.
-      # If Traefik has a global HTTP to HTTPS redirect on the 'web' entrypoint, this might be redundant
-      # but won't harm.
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
-
-      # Service definition
-      - "traefik.http.services.portfolio-service.loadbalancer.server.port=80" # Your app inside the container listens on port 80
+      # --- Service Definition ---
+      - "traefik.http.services.portfolio-service.loadbalancer.server.port=80" # Your app's port
 
     networks:
-      - dokploy-network # Connect this service to the dokploy-network
+      - dokploy-network
 
 networks:
   dokploy-network:
-    external: true     # Assume dokploy-network was created by Dokploy/Traefik setup
+    external: true
